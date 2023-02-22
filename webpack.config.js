@@ -73,10 +73,10 @@ module.exports = [
     target: "web",
   },
   {
-    devtool: IS_PROD ? undefined : "inline-source-map",
+    devtool: "inline-source-map",
     entry: path.join(SRC_ROOT, "server/index.js"),
     externals: [nodeExternals()],
-    mode: IS_PROD ? "production" : "development",
+    mode: "development",
     module: {
       rules: [
         {
