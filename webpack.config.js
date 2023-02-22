@@ -20,7 +20,7 @@ const IS_PROD = process.env.NODE_ENV === "production"
 /** @type {Array<import('webpack').Configuration>} */
 module.exports = [
   {
-    devtool: "inline-source-map",
+    devtool: IS_PROD ? undefined : "inline-source-map",
     entry: path.join(SRC_ROOT, "client/index.jsx"),
     mode: IS_PROD ? "production" : "development",
     module: {
@@ -72,10 +72,10 @@ module.exports = [
     target: "web",
   },
   {
-    devtool: "inline-source-map",
+    devtool: IS_PROD ? undefined : "inline-source-map",
     entry: path.join(SRC_ROOT, "server/index.js"),
     externals: [nodeExternals()],
-    mode: "development",
+    mode: IS_PROD ? "production" : "development",
     module: {
       rules: [
         {
