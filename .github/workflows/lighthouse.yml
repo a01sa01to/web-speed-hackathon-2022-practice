@@ -125,13 +125,11 @@ jobs:
         with:
           name: lighthouse_result
           path: report
-
       - name: Calc Total Score
-        run: |
-          echo "total_score=$(node ./report/score.js)" >> $GITHUB_ENV
-
+        id: calc
+        run: echo "total_score=$(node ./report/score.js)" >> $GITHUB_OUTPUT
       - name: Comment on Commit
         uses: peter-evans/commit-comment@v2
         with:
           body: |
-            ${{ env.total_score }}
+            ${{ steps.calc.outputs.total_score }}
