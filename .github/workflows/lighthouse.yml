@@ -127,7 +127,11 @@ jobs:
           path: report
       - name: Calc Total Score
         id: calc
-        run: echo "total_score=$(node ./report/score.js)" >> $GITHUB_OUTPUT
+        run: |
+          delimiter="$(openssl rand -hex 16)"
+          echo "total_score<<$delimiter" >> $GITHUB_OUTPUT
+          echo "$(node ./report/score.js)" >> $GITHUB_OUTPUT
+          echo "$delimiter" >> $GITHUB_OUTPUT
       - name: Comment on Commit
         uses: peter-evans/commit-comment@v2
         with:
