@@ -15,7 +15,7 @@ const DIST_ROOT = abs("./dist");
 const DIST_PUBLIC = abs("./dist/public");
 
 const IS_ANALYZE = process.env.ANALYZE === "true"
-const IS_PROD = process.env.NODE_ENV === "production"
+const IS_PROD = process.env.PRODUCTION === "true"
 
 /** @type {Array<import('webpack').Configuration>} */
 module.exports = [
@@ -55,6 +55,7 @@ module.exports = [
     },
     name: "client",
     output: {
+      filename: "[name].bundle.js",
       path: DIST_PUBLIC,
     },
     plugins: [
