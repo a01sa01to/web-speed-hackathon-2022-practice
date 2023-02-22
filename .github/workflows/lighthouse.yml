@@ -3,25 +3,126 @@ name: lighthouse
 on: [push]
 
 jobs:
-  test:
-    runs-on: ubuntu-18.04
+  test-home:
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
           cache: "yarn"
-
       - name: Install deps
         run: yarn install
-
       - name: Build
         run: yarn build
-
       - name: Run Server
         run: |
-          npx concurrently -k -s first -n "SERVER,LIGHTHOUSE" -c "blue,red" "yarn serve:test" "npx wait-on tcp:3000 && npx lighthouse --chrome-flags='--headless' --output json --output-path ./report/top.json http://localhost:3000 && npx lighthouse --chrome-flags='--headless' --output json --output-path ./report/race-card.json http://localhost:3000/races/59b583d7-d696-4365-ae5d-2e9d13deef1f/race-card && npx lighthouse --chrome-flags='--headless' --output json --output-path ./report/odds1.json http://localhost:3000/races/59b583d7-d696-4365-ae5d-2e9d13deef1f/odds && npx lighthouse --chrome-flags='--headless' --output json --output-path ./report/odds2.json http://localhost:3000/races/1f5a7da6-b312-4641-8eac-7b34256a9bb5/odds && npx lighthouse --chrome-flags='--headless' --output json --output-path ./report/result.json http://localhost:3000/races/1f5a7da6-b312-4641-8eac-7b34256a9bb5/result"
+          npx concurrently -k -s first -n "SERVER,LIGHTHOUSE" -c "blue,red" "yarn serve:test" "npx wait-on tcp:3000 && npx lighthouse --chrome-flags='--headless' --output json --output-path ./report/top.json http://localhost:3000"
+      - name: Save Result
+        uses: actions/upload-artifact@v3
+        with:
+          name: lighthouse_result
+          path: report
+
+  test-race-card:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          cache: "yarn"
+      - name: Install deps
+        run: yarn install
+      - name: Build
+        run: yarn build
+      - name: Run Server
+        run: |
+          npx concurrently -k -s first -n "SERVER,LIGHTHOUSE" -c "blue,red" "yarn serve:test" "npx wait-on tcp:3000 && npx lighthouse --chrome-flags='--headless' --output json --output-path ./report/race-card.json http://localhost:3000/races/59b583d7-d696-4365-ae5d-2e9d13deef1f/race-card"
+      - name: Save Result
+        uses: actions/upload-artifact@v3
+        with:
+          name: lighthouse_result
+          path: report
+
+  test-race-odds1:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          cache: "yarn"
+      - name: Install deps
+        run: yarn install
+      - name: Build
+        run: yarn build
+      - name: Run Server
+        run: |
+          npx concurrently -k -s first -n "SERVER,LIGHTHOUSE" -c "blue,red" "yarn serve:test" "npx wait-on tcp:3000 && npx lighthouse --chrome-flags='--headless' --output json --output-path ./report/odds1.json http://localhost:3000/races/59b583d7-d696-4365-ae5d-2e9d13deef1f/odds"
+      - name: Save Result
+        uses: actions/upload-artifact@v3
+        with:
+          name: lighthouse_result
+          path: report
+
+  test-race-odds2:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          cache: "yarn"
+      - name: Install deps
+        run: yarn install
+      - name: Build
+        run: yarn build
+      - name: Run Server
+        run: |
+          npx concurrently -k -s first -n "SERVER,LIGHTHOUSE" -c "blue,red" "yarn serve:test" "npx wait-on tcp:3000 && npx lighthouse --chrome-flags='--headless' --output json --output-path ./report/odds2.json http://localhost:3000/races/1f5a7da6-b312-4641-8eac-7b34256a9bb5/odds"
+      - name: Save Result
+        uses: actions/upload-artifact@v3
+        with:
+          name: lighthouse_result
+          path: report
+
+  test-result:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          cache: "yarn"
+      - name: Install deps
+        run: yarn install
+      - name: Build
+        run: yarn build
+      - name: Run Server
+        run: |
+          npx concurrently -k -s first -n "SERVER,LIGHTHOUSE" -c "blue,red" "yarn serve:test" "npx wait-on tcp:3000 && npx lighthouse --chrome-flags='--headless' --output json --output-path ./report/result.json http://localhost:3000/races/1f5a7da6-b312-4641-8eac-7b34256a9bb5/result"
+      - name: Save Result
+        uses: actions/upload-artifact@v3
+        with:
+          name: lighthouse_result
+          path: report
+
+  calculate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          cache: "yarn"
+      - name: Install deps
+        run: yarn install
+      - name: Download Result
+        uses: actions/download-artifact@v3
+        with:
+          name: lighthouse_result
+          path: report
 
       - name: Calc Total Score
         run: |
@@ -31,5 +132,4 @@ jobs:
         uses: peter-evans/commit-comment@v2
         with:
           body: |
-            <h2>Total Lighthouse Bench Score</h2>
-            <pre>${{ env.total_score }}</pre>
+            ${{ env.total_score }}
