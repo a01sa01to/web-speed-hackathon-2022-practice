@@ -49,6 +49,11 @@ calcScore("odds1", JSON.parse(fs.readFileSync(ODDS1_JSON)));
 calcScore("odds2", JSON.parse(fs.readFileSync(ODDS2_JSON)));
 calcScore("race-result", JSON.parse(fs.readFileSync(RESULT_JSON)));
 
+console.log("### Summary\n");
+
+console.log("| Page | FCP | SI | LCP | TTI | TBT | CLS | Score |");
+console.log("| --- | --- | --- | --- | --- | --- | --- | --- |");
+
 console.log(`| **Total** | ${sum(fcps).toFixed(3)} | ${sum(sis).toFixed(3)} | ${sum(lcps).toFixed(3)} | ${sum(ttis).toFixed(3)} | ${sum(tbts).toFixed(3)} | ${sum(clss).toFixed(3)} | ${sum(scores).toFixed(3)} |`);
 console.log(`| **Average** | ${(sum(fcps) / 5).toFixed(3)} | ${(sum(sis) / 5).toFixed(3)} | ${(sum(lcps) / 5).toFixed(3)} | ${(sum(ttis) / 5).toFixed(3)} | ${(sum(tbts) / 5).toFixed(3)} | ${(sum(clss) / 5).toFixed(3)} | ${(sum(scores) / 5).toFixed(3)} |`);
 

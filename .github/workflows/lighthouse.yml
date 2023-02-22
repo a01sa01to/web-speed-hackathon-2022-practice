@@ -113,13 +113,8 @@ jobs:
     needs:
       [test-home, test-race-card, test-race-odds1, test-race-odds2, test-result]
     steps:
-      - uses: actions/checkout@v2
       - name: Setup Node
         uses: actions/setup-node@v3
-        with:
-          cache: "yarn"
-      - name: Install deps
-        run: yarn install
       - name: Download Result
         uses: actions/download-artifact@v3
         with:
