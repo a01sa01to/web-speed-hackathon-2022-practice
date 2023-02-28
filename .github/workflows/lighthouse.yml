@@ -3,7 +3,7 @@ name: lighthouse
 on: [push]
 
 jobs:
-  test-home:
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -15,6 +15,28 @@ jobs:
         run: yarn install
       - name: Build
         run: yarn build
+      - name: Upload Build
+        uses: actions/upload-artifact@v3
+        with:
+          name: build
+          path: dist
+
+  test-home:
+    runs-on: ubuntu-latest
+    needs: [build]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          cache: "yarn"
+      - name: Install deps
+        run: yarn install
+      - name: Download Build
+        uses: actions/download-artifact@v3
+        with:
+          name: build
+          path: dist
       - name: Run Server
         run: |
           npx concurrently -k -s first -n "SERVER,LIGHTHOUSE" -c "blue,red" "yarn serve:test" "npx wait-on http://0.0.0.0:3000 -t 20000 && npx lighthouse --chrome-flags='--headless' --output json --output-path ./report/top.json http://localhost:3000"
@@ -26,6 +48,7 @@ jobs:
 
   test-race-card:
     runs-on: ubuntu-latest
+    needs: [build]
     steps:
       - uses: actions/checkout@v2
       - name: Setup Node
@@ -34,8 +57,11 @@ jobs:
           cache: "yarn"
       - name: Install deps
         run: yarn install
-      - name: Build
-        run: yarn build
+      - name: Download Build
+        uses: actions/download-artifact@v3
+        with:
+          name: build
+          path: dist
       - name: Run Server
         run: |
           npx concurrently -k -s first -n "SERVER,LIGHTHOUSE" -c "blue,red" "yarn serve:test" "npx wait-on http://0.0.0.0:3000 -t 20000 && npx lighthouse --chrome-flags='--headless' --output json --output-path ./report/race-card.json http://localhost:3000/races/59b583d7-d696-4365-ae5d-2e9d13deef1f/race-card"
@@ -47,6 +73,7 @@ jobs:
 
   test-race-odds1:
     runs-on: ubuntu-latest
+    needs: [build]
     steps:
       - uses: actions/checkout@v2
       - name: Setup Node
@@ -55,8 +82,11 @@ jobs:
           cache: "yarn"
       - name: Install deps
         run: yarn install
-      - name: Build
-        run: yarn build
+      - name: Download Build
+        uses: actions/download-artifact@v3
+        with:
+          name: build
+          path: dist
       - name: Run Server
         run: |
           npx concurrently -k -s first -n "SERVER,LIGHTHOUSE" -c "blue,red" "yarn serve:test" "npx wait-on http://0.0.0.0:3000 -t 20000 && npx lighthouse --chrome-flags='--headless' --output json --output-path ./report/odds1.json http://localhost:3000/races/59b583d7-d696-4365-ae5d-2e9d13deef1f/odds"
@@ -68,6 +98,7 @@ jobs:
 
   test-race-odds2:
     runs-on: ubuntu-latest
+    needs: [build]
     steps:
       - uses: actions/checkout@v2
       - name: Setup Node
@@ -76,8 +107,11 @@ jobs:
           cache: "yarn"
       - name: Install deps
         run: yarn install
-      - name: Build
-        run: yarn build
+      - name: Download Build
+        uses: actions/download-artifact@v3
+        with:
+          name: build
+          path: dist
       - name: Run Server
         run: |
           npx concurrently -k -s first -n "SERVER,LIGHTHOUSE" -c "blue,red" "yarn serve:test" "npx wait-on http://0.0.0.0:3000 -t 20000 && npx lighthouse --chrome-flags='--headless' --output json --output-path ./report/odds2.json http://localhost:3000/races/1f5a7da6-b312-4641-8eac-7b34256a9bb5/odds"
@@ -89,6 +123,7 @@ jobs:
 
   test-result:
     runs-on: ubuntu-latest
+    needs: [build]
     steps:
       - uses: actions/checkout@v2
       - name: Setup Node
@@ -97,8 +132,11 @@ jobs:
           cache: "yarn"
       - name: Install deps
         run: yarn install
-      - name: Build
-        run: yarn build
+      - name: Download Build
+        uses: actions/download-artifact@v3
+        with:
+          name: build
+          path: dist
       - name: Run Server
         run: |
           npx concurrently -k -s first -n "SERVER,LIGHTHOUSE" -c "blue,red" "yarn serve:test" "npx wait-on http://0.0.0.0:3000 -t 20000 && npx lighthouse --chrome-flags='--headless' --output json --output-path ./report/result.json http://localhost:3000/races/1f5a7da6-b312-4641-8eac-7b34256a9bb5/result"
@@ -127,6 +165,8 @@ jobs:
           echo "total_score<<$delimiter" >> $GITHUB_OUTPUT
           echo "$(node ./report/score.js)" >> $GITHUB_OUTPUT
           echo "$delimiter" >> $GITHUB_OUTPUT
+      - name: Show Total Score
+        run: echo ${{ steps.calc.outputs.total_score }}
       - name: Comment on Commit
         uses: peter-evans/commit-comment@v2
         with:
