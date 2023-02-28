@@ -29,7 +29,7 @@ const Item = ({ image, name, number }) => {
     <Stack gap={Space * 1}>
       <img alt={`${name}選手のプロフィール写真`}
         height={100}
-        src={image}
+        src={image.replace("jpg","webp")}
         style={{objectFit: "cover"}}
         width={100}
       />
