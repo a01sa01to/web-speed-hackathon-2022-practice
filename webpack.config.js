@@ -42,8 +42,11 @@ module.exports = [
                 [
                   "@babel/preset-env",
                   {
-                    modules: "cjs",
                     spec: true,
+                    targets: {
+                      chrome: "106",
+                      safari: "16.0"
+                    }
                   },
                 ],
                 "@babel/preset-react",
