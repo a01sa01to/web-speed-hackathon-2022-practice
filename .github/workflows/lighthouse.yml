@@ -165,8 +165,6 @@ jobs:
           echo "total_score<<$delimiter" >> $GITHUB_OUTPUT
           echo "$(node ./report/score.js)" >> $GITHUB_OUTPUT
           echo "$delimiter" >> $GITHUB_OUTPUT
-      - name: Show Total Score
-        run: echo ${{ steps.calc.outputs.total_score }}
       - name: Comment on Commit
         uses: peter-evans/commit-comment@v2
         with:
