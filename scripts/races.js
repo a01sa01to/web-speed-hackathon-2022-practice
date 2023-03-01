@@ -1,5 +1,4 @@
 import dayjs from "dayjs"
-import _ from "lodash";
 import { v4 as uuid } from "uuid";
 
 import { Race } from "../src/model/index.js";
@@ -66,7 +65,7 @@ export async function insertRaces(startDate, endDate) {
             3,
             "0",
           )}.jpg`,
-          name: _.sample(NAMES),
+          name: NAMES[Math.min(Math.floor(Math.random() * NAMES.length), NAMES.length - 1)],
           startAt: startAt.toDate(),
         }),
       );

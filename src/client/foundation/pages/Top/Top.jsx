@@ -1,5 +1,4 @@
 import dayjs from "dayjs"
-import _ from "lodash";
 import React, { Suspense, useCallback, useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import styled from "styled-components";
@@ -33,10 +32,7 @@ function useTodayRacesWithAnimation(races) {
 
   useEffect(() => {
     const isRacesUpdate =
-      _.difference(
-        races.map((e) => e.id),
-        prevRaces.current.map((e) => e.id),
-      ).length !== 0;
+      races.map((e)=>e.id).some((id)=>!prevRaces.current.map((e)=>e.id).includes(id));
 
     prevRaces.current = races;
     setIsRacesUpdate(isRacesUpdate);
@@ -64,7 +60,7 @@ function useTodayRacesWithAnimation(races) {
       }
 
       numberOfRacesToShow.current++;
-      setRacesToShow(_.slice(races, 0, numberOfRacesToShow.current));
+      setRacesToShow(races.slice(0, numberOfRacesToShow.current));
     }, 100);
   }, [isRacesUpdate, races]);
 
